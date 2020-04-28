@@ -1,6 +1,6 @@
 FROM python:3.6
-COPY . /app
-WORKDIR /app
+COPY . app/
+WORKDIR app/
 RUN pip install -r requirements.txt
 ENTRYPOINT ["python"]
-CMD ["flask_api_1.py"]
+CMD ["app.py"]

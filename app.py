@@ -1,6 +1,7 @@
-# # Firebase stuff
-# import firebase_admin
-# from firebase_admin import credentials
+# Firebase stuff
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
 
 # Make a flask API for our DL Model
 from keras.preprocessing.image import img_to_array
@@ -13,6 +14,17 @@ from PIL import Image
 from keras.models import model_from_json
 import tensorflow as tf
 
+# Firebase: get credentials and options
+cred = credentials.Certificate('firebase-sdk.json')
+params = {
+	'databaseURL': 'https://test-app-e0c0d.firebaseio.com/'
+}
+
+# Firebase: init app
+firebase_admin.initialize_app(cred, params)
+ref = db.reference('/')
+
+# Flask stuff
 app = Flask(__name__)
 api = Api(app, version='1.0', title='MNIST Classification', description='CNN for Mnist')
 ns = api.namespace('Make_School', description='Methods')
@@ -38,23 +50,28 @@ class CNNPrediction(Resource):
 	def post(self):
 		args = single_parser.parse_args()
 		image_file = args.file
-		image_file.save('milad.png')
-		img = Image.open('milad.png')
+		image_file.save('image.png')
+		img = Image.open('image.png')
 		image_red = img.resize((28, 28))
 		image = img_to_array(image_red)
-		print(image.shape)
+		# print(image.shape)
 		x = image.reshape(1, 28, 28, 1)
 		x = x/255
 
 		# This is not good, because this code implies that the model will be
 		# loaded each and every time a new request comes in.
 		# model = load_model(my_model)
+
 		with graph.as_default():
 			out = model.predict(x)
 		print(out[0])
 		print(np.argmax(out[0]))
 		r = np.argmax(out[0])
 
+		# save r to database
+		ref.push({'prediction': str(r)})
+
+		# return object
 		return {'prediction': str(r)}
 
 if __name__ == '__main__':
