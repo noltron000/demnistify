@@ -4,3 +4,4 @@ Keras==2.2.4
 tensorflow==1.15.2
 Pillow==5.1.0
 Werkzeug==0.16.0
+firebase_admin
