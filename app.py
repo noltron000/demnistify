@@ -1,5 +1,8 @@
-# Make a flask API for our DL Model
+# # Firebase stuff
+# import firebase_admin
+# from firebase_admin import credentials
 
+# Make a flask API for our DL Model
 from keras.preprocessing.image import img_to_array
 from keras.models import load_model
 from flask_restplus import Api, Resource, fields
@@ -13,11 +16,12 @@ import tensorflow as tf
 app = Flask(__name__)
 api = Api(app, version='1.0', title='MNIST Classification', description='CNN for Mnist')
 ns = api.namespace('Make_School', description='Methods')
+my_model = 'my_model.h5'
 
 single_parser = api.parser()
 single_parser.add_argument('file', location='files', type=FileStorage, required=True)
 
-model = load_model('my_model.h5')
+model = load_model(my_model)
 graph = tf.get_default_graph()
 
 # Model reconstruction from JSON file
@@ -25,7 +29,7 @@ graph = tf.get_default_graph()
 # 	model = model_from_json(f.read())
 #
 # Load weights into the new model
-model.load_weights('my_model.h5')
+model.load_weights(my_model)
 
 @ns.route('/prediction')
 class CNNPrediction(Resource):
@@ -44,7 +48,7 @@ class CNNPrediction(Resource):
 
 		# This is not good, because this code implies that the model will be
 		# loaded each and every time a new request comes in.
-		# model = load_model('my_model.h5')
+		# model = load_model(my_model)
 		with graph.as_default():
 			out = model.predict(x)
 		print(out[0])
