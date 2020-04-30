@@ -1,3 +1,6 @@
+# time stuff
+from datetime import datetime
+
 # Firebase stuff
 import firebase_admin
 from firebase_admin import credentials
@@ -69,10 +72,16 @@ class CNNPrediction(Resource):
 		r = np.argmax(out[0])
 
 		# save r to database
-		ref.push({'prediction': str(r)})
+		my_object = {
+			'prediction': str(r),
+			'filename': image_file.filename,
+			'time': str(datetime.now())
+		}
+
+		ref.push(my_object)
 
 		# return object
-		return {'prediction': str(r)}
+		return my_object
 
 if __name__ == '__main__':
 	app.run(host='0.0.0.0', port=8000)
