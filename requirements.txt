@@ -2,6 +2,6 @@ Flask==1.0.2
 flask-restplus==0.12.1
 Keras==2.2.4
 tensorflow==1.15.2
-Pillow==5.1.0
+Pillow==8.1.1
 Werkzeug==0.16.0
 firebase_admin
